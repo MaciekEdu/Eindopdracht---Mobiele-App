@@ -1,0 +1,14 @@
+<main>
+  <h2>Overzicht (<%= aantalItems %> items)</h2>
+
+  <div class="kaarten-grid">
+    <% items.forEach(item => { %>
+      <article class="boek-kaart">
+        <h3><%= item.categorie %></h3>
+        <p><%= item.omschrijving %></p>
+        <p><%= item.waarde %></p>
+        <time><%= item.datum %></time>
+      </article>
+    <% }); %>
+  </div>
+</main>
