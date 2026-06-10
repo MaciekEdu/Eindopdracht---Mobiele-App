@@ -1,40 +1,18 @@
-const express = require('express');
+const express = require("express");
+const path = require("path");
+
 const app = express();
+const PORT = process.env.PORT || 3000;
 
-// Static files (CSS, JS, afbeeldingen)
-app.use(express.static('public'));
+// Public map beschikbaar maken
+app.use(express.static(path.join(__dirname, "public")));
 
-
-// EJS instellen als template-engine
-app.set('view engine', 'ejs');
-
-
-// Dashboard
-app.get('/dashboard', (req, res) => {
-  res.render('dashboard'); // laadt views/dashboard.ejs
+// Express 5 wildcard fix — werkt 100%
+app.get(/.*/, (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "index.html"));
 });
 
-// Toevoegen-pagina
-app.get('/toevoegen', (req, res) => {
-  res.render('toevoegen'); // laadt views/toevoegen.ejs
-});
-
-app.listen(3000, () => {
-  console.log('Server draait op http://localhost:3000');
-});
-
-// Testdata — later vervangen door LocalStorage
-const items = [
-  { categorie: 'sport',   omschrijving: 'Hardlopen',  waarde: '30 min',  datum: '2025-04-16' },
-  { categorie: 'voeding', omschrijving: 'Havermout',  waarde: '350 kcal', datum: '2025-04-16' },
-  { categorie: 'slaap',   omschrijving: 'Geslapen',   waarde: '7,5 uur', datum: '2025-04-15' },
-];
-
-app.get('/dashboard', (req, res) => {
-  res.render('dashboard', {
-    title: 'Dashboard',
-    appNaam: 'Mijn Bibliotheek',
-    items: items,                    // alle items doorgeven
-    aantalItems: items.length        // ook berekend getal
-  });
+// Server starten
+app.listen(PORT, () => {
+  console.log(`Server draait op http://localhost:${PORT}`);
 });

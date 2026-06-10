@@ -1,37 +1,115 @@
-:root {
-  --kleur-primair:    #2E7D32;
-  --kleur-donker:     #1B5E20;
-  --kleur-achtergrond:#F8F9FA;
-  --radius:           12px;
+* {
+  box-sizing: border-box;
+  font-family: system-ui, sans-serif;
 }
 
-* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  margin: 0;
+  background: #f5f5f5;
+}
 
-.app-header {
-  background: var(--kleur-primair);
-  color: white;
-  padding: 16px 20px;
+header {
+  background: #ff6600;
+  color: #fff;
+  padding: 1rem;
+}
+
+nav {
+  margin-top: 0.5rem;
+  display: flex;
+  gap: 0.5rem;
+}
+
+.nav-btn {
+  flex: 1;
+  padding: 0.5rem;
+  border: none;
+  background: #fff;
+  color: #ff6600;
+  border-radius: 4px;
+}
+
+main {
+  padding: 1rem;
+}
+
+.view.hidden {
+  display: none;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+label span {
+  display: block;
+  margin-bottom: 0.25rem;
+}
+
+input, select, button {
+  padding: 0.5rem;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+}
+
+button {
+  cursor: pointer;
+}
+
+.filters {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+#entries-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+#entries-list li {
+  background: #fff;
+  padding: 0.75rem;
+  margin-bottom: 0.5rem;
+  border-radius: 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.entry-header {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  font-weight: bold;
 }
 
-.hoofd-nav {
-  display: flex;
-  gap: 8px;
+.entry-actions {
+  margin-top: 0.25rem;
 }
 
-.hoofd-nav a {
-  color: rgba(255,255,255,.8);
-  text-decoration: none;
-  padding: 6px 12px;
-  border-radius: 8px;
-  font-size: .9rem;
-  transition: background .15s;
+.entry-actions button {
+  background: #e53935;
+  color: #fff;
+  border: none;
 }
 
-.hoofd-nav a:hover,
-.hoofd-nav a.actief {
-  background: rgba(255,255,255,.2);
-  color: white;
+/* Desktop */
+@media (min-width: 768px) {
+  main {
+    max-width: 800px;
+    margin: 0 auto;
+  }
+
+  .filters {
+    flex-direction: row;
+    align-items: flex-end;
+  }
+
+  .filters label {
+    flex: 1;
+  }
 }
