@@ -5,15 +5,16 @@
   <title>Calorieënteller</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="manifest" href="manifest.json">
-  <link rel="stylesheet" href="/public/css/style.css">
+  <link rel="stylesheet" href="css/style.css">
+  <script src="js/app.js" defer></script>
 </head>
 <body>
   <header>
     <h1 data-key="title">Calorieënteller</h1>
     <nav>
-      <button data-view="dashboard" class="nav-btn" data-key="navDashboard">Dashboard</button>
-      <button data-view="add" class="nav-btn" data-key="navAdd">Toevoegen</button>
-      <button data-view="overview" class="nav-btn" data-key="navOverview">Overzicht</button>
+      <button class="nav-btn" data-view="dashboard" data-key="navDashboard">Dashboard</button>
+      <button class="nav-btn" data-view="add" data-key="navAdd">Toevoegen</button>
+      <button class="nav-btn" data-view="overview" data-key="navOverview">Overzicht</button>
     </nav>
   </header>
 
@@ -89,7 +90,10 @@
     <button id="lang-nl">NL</button>
     <button id="lang-en">EN</button>
   </footer>
-
-  <script src="app.js"></script>
+  <script>
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker.register("js/service-worker.js");
+    }
+  </script>
 </body>
 </html>
