@@ -1,5 +1,6 @@
 const CACHE_NAME = "calorie-app-v1";
 
+
 const urlsToCache = [
   "./",
   "./index.html",
@@ -8,6 +9,7 @@ const urlsToCache = [
   "./icons/icon-192.png",
   "./icons/icon-512.png"
 ];
+
 
 // Install
 self.addEventListener("install", event => {
