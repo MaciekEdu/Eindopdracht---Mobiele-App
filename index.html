@@ -6,8 +6,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="manifest" href="./manifest.json">
   <link rel="stylesheet" href="css/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="js/app.js" defer></script>
 </head>
+
 <body>
   <header>
     <h1 data-key="title">Calorieënteller</h1>
@@ -17,83 +19,76 @@
       <button class="nav-btn" data-view="overview" data-key="navOverview">Overzicht</button>
     </nav>
   </header>
+      <main>
+        <section id="dashboard" class="view">
+          <h2 data-key="dashTitle">Overzicht vandaag</h2>
+          <p data-key="dashTotal">Totaal kcal vandaag:</p>
+          <p id="total-today">0</p>
+          <canvas id="calorieChart" width="320" height="320"></canvas>
+        </section>
+        <section id="add" class="view hidden">
+          <h2 data-key="addTitle">Nieuwe invoer</h2>
+          <form id="entry-form">
+            <label>
+              <span data-key="labelDate">Datum</span>
+              <input type="date" id="date" required>
+            </label>
+            <label>
+              <span data-key="labelCategory">Categorie</span>
+              <select id="category" required>
+                <option value="Ontbijt">Ontbijt</option>
+                <option value="Lunch">Lunch</option>
+                <option value="Diner">Diner</option>
+                <option value="Snack">Snack</option>
+                <option value="Drinken">Drinken</option>
+              </select>
+            </label>
+            <label>
+              <span data-key="labelDescription">Omschrijving</span>
+              <input type="text" id="description" required>
+            </label>
 
-  <main>
-    <!-- DASHBOARD -->
-    <section id="dashboard" class="view">
-      <h2 data-key="dashTitle">Overzicht vandaag</h2>
-      <p data-key="dashTotal">Totaal kcal vandaag:</p>
-      <p id="total-today">0</p>
-    </section>
+            <label>
+              <span data-key="labelCalories">Kcal</span>
+              <input type="number" id="calories" min="0" required>
+            </label>
 
-    <!-- TOEVOEGEN -->
-    <section id="add" class="view hidden">
-      <h2 data-key="addTitle">Nieuwe invoer</h2>
-      <form id="entry-form">
-        <label>
-          <span data-key="labelDate">Datum</span>
-          <input type="date" id="date" required>
-        </label>
+            <button type="submit" data-key="btnSave">Opslaan</button>
+          </form>
+        </section>
+        <section id="overview" class="view hidden">
+          <h2 data-key="overviewTitle">Overzicht</h2>
 
-        <label>
-          <span data-key="labelCategory">Categorie</span>
-          <select id="category" required>
-            <option value="Ontbijt">Ontbijt</option>
-            <option value="Lunch">Lunch</option>
-            <option value="Diner">Diner</option>
-            <option value="Snack">Snack</option>
-            <option value="Drinken">Drinken</option>
-          </select>
-        </label>
+          <div class="filters">
+            <label>
+              <span data-key="labelPeriod">Periode</span>
+              <select id="period">
+                <option value="day" data-key="optDay">Dag</option>
+                <option value="week" data-key="optWeek">Week</option>
+                <option value="month" data-key="optMonth">Maand</option>
+              </select>
+            </label>
 
-        <label>
-          <span data-key="labelDescription">Omschrijving</span>
-          <input type="text" id="description" required>
-        </label>
+            <label>
+              <span data-key="labelFilterDate">Datum</span>
+              <input type="date" id="filter-date">
+            </label>
 
-        <label>
-          <span data-key="labelCalories">Kcal</span>
-          <input type="number" id="calories" min="0" required>
-        </label>
+            <button id="apply-filter" data-key="btnFilter">Filter</button>
+          </div>
 
-        <button type="submit" data-key="btnSave">Opslaan</button>
-      </form>
-    </section>
+          <ul id="entries-list"></ul>
+        </section>
+      </main>
+      <footer>
+        <button id="lang-nl">NL</button>
+        <button id="lang-en">EN</button>
+      </footer>
+      <script>
+        if ("serviceWorker" in navigator) {
+          navigator.serviceWorker.register("./sw.js");
+        }
+      </script>
 
-    <!-- OVERZICHT -->
-    <section id="overview" class="view hidden">
-      <h2 data-key="overviewTitle">Overzicht</h2>
-
-      <div class="filters">
-        <label>
-          <span data-key="labelPeriod">Periode</span>
-          <select id="period">
-            <option value="day" data-key="optDay">Dag</option>
-            <option value="week" data-key="optWeek">Week</option>
-            <option value="month" data-key="optMonth">Maand</option>
-          </select>
-        </label>
-
-        <label>
-          <span data-key="labelFilterDate">Datum</span>
-          <input type="date" id="filter-date">
-        </label>
-
-        <button id="apply-filter" data-key="btnFilter">Filter</button>
-      </div>
-
-      <ul id="entries-list"></ul>
-    </section>
-  </main>
-
-  <footer>
-    <button id="lang-nl">NL</button>
-    <button id="lang-en">EN</button>
-  </footer>
-  <script>
-    if ("serviceWorker" in navigator) {
-      navigator.serviceWorker.register("/public/sw.js")
-    }
-  </script>
-</body>
+    </body>
 </html>

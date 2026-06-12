@@ -1,77 +1,52 @@
-/* ===========================
-   LOCALSTORAGE FUNCTIES
-   =========================== */
-
+/* laad alle opgeslagen entries */
 function loadEntries() {
   return JSON.parse(localStorage.getItem("healthEntries")) || [];
 }
 
+/* sla entries op */
 function saveEntries(entries) {
   localStorage.setItem("healthEntries", JSON.stringify(entries));
 }
 
+/* voeg nieuwe entry toe */
 function addEntry(entry) {
   const entries = loadEntries();
   entries.push(entry);
   saveEntries(entries);
 }
 
+/* verwijder entry */
 function deleteEntry(id) {
   const entries = loadEntries().filter(e => e.id !== id);
   saveEntries(entries);
 }
 
+/* haal max kcal op (standaard 2000) */
+function getMaxCalories() {
+  return Number(localStorage.getItem("maxCalories")) || 2000;
+}
 
-/* ===========================
-   FILTER FUNCTIES
-   =========================== */
+/* sla max kcal op */
+function setMaxCalories(value) {
+  localStorage.setItem("maxCalories", value);
+}
 
+/* filter entries op vandaag */
 function filterByDay(date) {
   return loadEntries().filter(e => e.date === date);
 }
 
-function filterByWeek(date) {
-  if (!date) return loadEntries();
-
-  const d = new Date(date);
-  const day = d.getDay(); // 0 = zondag
-  const weekStart = new Date(d);
-  weekStart.setDate(d.getDate() - day);
-
-  const weekEnd = new Date(weekStart);
-  weekEnd.setDate(weekStart.getDate() + 6);
-
-  return loadEntries().filter(e => {
-    const ed = new Date(e.date);
-    return ed >= weekStart && ed <= weekEnd;
-  });
-}
-
-function filterByMonth(date) {
-  if (!date) return loadEntries();
-  const [year, month] = date.split("-");
-  return loadEntries().filter(e => e.date.startsWith(`${year}-${month}`));
-}
-
-
-/* ===========================
-   UI ELEMENTEN
-   =========================== */
-
 const views = document.querySelectorAll(".view");
 const navButtons = document.querySelectorAll(".nav-btn");
+
 const form = document.getElementById("entry-form");
 const entriesList = document.getElementById("entries-list");
 const totalTodayEl = document.getElementById("total-today");
-const periodSelect = document.getElementById("period");
-const filterDateInput = document.getElementById("filter-date");
-const applyFilterBtn = document.getElementById("apply-filter");
 
+const maxCaloriesInput = document.getElementById("max-calories");
+const saveMaxBtn = document.getElementById("save-max");
 
-/* ===========================
-   VIEW SWITCHING
-   =========================== */
-
+/* wissel tussen pagina's */
 navButtons.forEach(btn => {
   btn.addEventListener("click", () => {
     const view = btn.dataset.view;
@@ -84,14 +59,10 @@ navButtons.forEach(btn => {
   });
 });
 
-
-/* ===========================
-   FORM SUBMIT (CREATE)
-   =========================== */
-
 form.addEventListener("submit", e => {
   e.preventDefault();
 
+  /* maak nieuw item */
   const entry = {
     id: crypto.randomUUID(),
     date: document.getElementById("date").value,
@@ -103,88 +74,106 @@ form.addEventListener("submit", e => {
   addEntry(entry);
   form.reset();
   updateDashboard();
-
-  alert("Invoer opgeslagen!");
 });
 
-
-/* ===========================
-   DASHBOARD (TOTAAL VANDAAG)
-   =========================== */
-
 function updateDashboard() {
+
+  /* pak datum van vandaag */
   const today = new Date().toISOString().slice(0, 10);
-  const todayEntries = filterByDay(today);
-  const total = todayEntries.reduce((sum, e) => sum + e.calories, 0);
+
+  /* haal entries van vandaag */
+  const entries = filterByDay(today);
+
+  /* tel kcal op */
+  const total = entries.reduce((sum, e) => sum + e.calories, 0);
+
+  /* toon totaal */
   totalTodayEl.textContent = total;
+
+  /* update grafiek */
+  updateChart(total);
 }
+let chart;
 
+function updateChart(total) {
 
-/* ===========================
-   OVERZICHT RENDEREN
-   =========================== */
+  /* haal max kcal */
+  const max = getMaxCalories();
 
+  /* bereken wat nog over is */
+  const remaining = max - total;
+
+  /* pak canvas */
+  const ctx = document.getElementById("calorieChart");
+
+  /* verwijder oude grafiek */
+  if (chart) {
+    chart.destroy();
+  }
+
+  /* maak kleine taartgrafiek */
+  chart = new Chart(ctx, {
+    type: "pie",
+
+    data: {
+      labels: ["Gegeten", "Over"],
+      datasets: [{
+        data: [
+          total,
+          remaining > 0 ? remaining : 0
+        ],
+        backgroundColor: ["green", "lightgray"]
+      }]
+    },
+
+    options: {
+      responsive: false,           /* zorgt dat hij klein blijft */
+      maintainAspectRatio: false   /* voorkomt fullscreen */
+    }
+  });
+}
 function renderOverview(entries) {
   entriesList.innerHTML = "";
 
   entries.forEach(e => {
     const li = document.createElement("li");
 
-    const header = document.createElement("div");
-    header.className = "entry-header";
-    header.innerHTML = `
-      <span>${e.date} - ${e.category}</span>
-      <span>${e.calories} kcal</span>
+    li.innerHTML = `
+      ${e.date} - ${e.category} - ${e.calories} kcal
+      <button>Reset</button>
     `;
 
-    const desc = document.createElement("div");
-    desc.textContent = e.description;
-
-    const actions = document.createElement("div");
-    actions.className = "entry-actions";
-
-    const delBtn = document.createElement("button");
-    delBtn.textContent = "Reset";
-    delBtn.addEventListener("click", () => {
-      if (confirm("Weet je zeker dat je dit item wilt verwijderen?")) {
-        deleteEntry(e.id);
-        renderOverview(loadEntries());
-        updateDashboard();
-      }
+    /* delete knop */
+    li.querySelector("button").addEventListener("click", () => {
+      deleteEntry(e.id);
+      renderOverview(loadEntries());
+      updateDashboard();
     });
-
-    actions.appendChild(delBtn);
-
-    li.appendChild(header);
-    li.appendChild(desc);
-    li.appendChild(actions);
 
     entriesList.appendChild(li);
   });
 }
 
+if (maxCaloriesInput && saveMaxBtn) {
 
-/* ===========================
-   FILTER KNOP
-   =========================== */
+  /* zet huidige waarde in input */
+  maxCaloriesInput.value = getMaxCalories();
 
-applyFilterBtn.addEventListener("click", () => {
-  const period = periodSelect.value;
-  const date = filterDateInput.value;
+  /* sla nieuwe waarde op */
+  saveMaxBtn.addEventListener("click", () => {
+    setMaxCalories(maxCaloriesInput.value);
+    updateDashboard();
+  });
+}
 
-  let result = [];
-
-  if (period === "day") result = filterByDay(date);
-  if (period === "week") result = filterByWeek(date);
-  if (period === "month") result = filterByMonth(date);
-
-  renderOverview(result);
-});
+/* start app */
+updateDashboard();
+renderOverview(loadEntries());
 
 
-/* ===========================
-   TAALSWITCH
-   =========================== */
+if ("serviceWorker" in navigator) {
+  navigator.serviceWorker.register("./sw.js");
+}
 
 const translations = {
   nl: {
@@ -241,17 +230,4 @@ document.getElementById("lang-nl").addEventListener("click", () => setLanguage("
 document.getElementById("lang-en").addEventListener("click", () => setLanguage("en"));
 
 
-/* ===========================
-   INIT
-   =========================== */
-
-setLanguage("nl");
-updateDashboard();
-renderOverview(loadEntries());
-
-
-if ("serviceWorker" in navigator) {
-  navigator.serviceWorker.register("./sw.js", { scope: "./" })
-    .then(reg => console.log("Service Worker werkt ", reg.scope))
-    .catch(err => console.log("SW fout:", err));
-}
+ 
