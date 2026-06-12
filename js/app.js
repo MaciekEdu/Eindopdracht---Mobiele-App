@@ -255,4 +255,3 @@ if ("serviceWorker" in navigator) {
     .then(reg => console.log("Service Worker werkt ", reg.scope))
     .catch(err => console.log("SW fout:", err));
 }
-

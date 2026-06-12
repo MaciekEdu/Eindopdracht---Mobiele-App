@@ -1,6 +1,5 @@
 const CACHE_NAME = "calorie-app-v1";
 
-
 const urlsToCache = [
   "./",
   "./index.html",
