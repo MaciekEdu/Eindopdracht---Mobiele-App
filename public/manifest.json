@@ -1,21 +1,25 @@
 {
-  "name": "Calorieënteller",
-  "short_name": "Calories",
-  "start_url": ".",
+  "name": "Calorieën Teller App",
+  "short_name": "CalorieApp",
+  "description": "Een PWA om je calorieën en voeding bij te houden",
+  "start_url": "/index.html",
   "display": "standalone",
   "background_color": "#ffffff",
-  "theme_color": "#ff6600",
-  "description": "Een eenvoudige PWA om dagelijkse calorieën bij te houden.",
+  "theme_color": "#4CAF50",
+  "orientation": "portrait",
+  "lang": "nl",
   "icons": [
     {
       "src": "icons/icon-192.png",
       "sizes": "192x192",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
     },
     {
       "src": "icons/icon-512.png",
       "sizes": "512x512",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
     }
   ]
 }
