@@ -251,8 +251,8 @@ renderOverview(loadEntries());
 
 
 if ("serviceWorker" in navigator) {
-  navigator.serviceWorker.register("./sw.js")
-    .then(() => console.log("Service Worker werkt"))
-    .catch(error => console.log("SW fout:", error));
+  navigator.serviceWorker.register("./sw.js", { scope: "./" })
+    .then(reg => console.log("Service Worker werkt ", reg.scope))
+    .catch(err => console.log("SW fout:", err));
 }
 

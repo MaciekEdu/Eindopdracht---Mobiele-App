@@ -9,14 +9,25 @@ const urlsToCache = [
   "./icons/icon-512.png"
 ];
 
+// Install
 self.addEventListener("install", event => {
+  self.skipWaiting(); //  zorgt dat nieuwe SW direct actief wordt
   event.waitUntil(
     caches.open(CACHE_NAME).then(cache => cache.addAll(urlsToCache))
   );
 });
 
+// Activate
+self.addEventListener("activate", event => {
+  event.waitUntil(self.clients.claim()); //  neemt direct controle over
+});
+
+// Fetch (offline support)
 self.addEventListener("fetch", event => {
   event.respondWith(
-    caches.match(event.request).then(res => res || fetch(event.request))
+    caches.match(event.request).then(response => {
+      return response || fetch(event.request);
+    })
   );
 });
+``
