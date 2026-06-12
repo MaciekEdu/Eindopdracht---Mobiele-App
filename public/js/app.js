@@ -248,3 +248,11 @@ document.getElementById("lang-en").addEventListener("click", () => setLanguage("
 setLanguage("nl");
 updateDashboard();
 renderOverview(loadEntries());
+
+
+if ("serviceWorker" in navigator) {
+  navigator.serviceWorker.register("./sw.js")
+    .then(() => console.log("Service Worker werkt"))
+    .catch(error => console.log("SW fout:", error));
+}
+
