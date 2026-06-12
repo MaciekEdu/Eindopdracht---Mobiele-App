@@ -1,22 +1,24 @@
 const CACHE_NAME = "calorie-app-v1";
-const FILES_TO_CACHE = [
-  "./",
-  "./index.html",
-  "./css/style.css",
-  "./js/app.js",
-  "./manifest.json"
+
+const urlsToCache = [
+  "/",
+  "/index.html",
+  "/style.css",
+  "/script.js",
+  "/icons/icon-192.png",
+  "/icons/icon-512.png"
 ];
 
-// Installatie — bestanden cachen
+// Install
 self.addEventListener("install", event => {
   event.waitUntil(
     caches.open(CACHE_NAME).then(cache => {
-      return cache.addAll(FILES_TO_CACHE);
+      return cache.addAll(urlsToCache);
     })
   );
 });
 
-// Fetch — offline fallback
+// Fetch (offline support)
 self.addEventListener("fetch", event => {
   event.respondWith(
     caches.match(event.request).then(response => {
